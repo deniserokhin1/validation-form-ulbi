@@ -14,13 +14,28 @@
   align-items: center;
 }
 
+.title {
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.input {
+  padding: 5px;
+  margin-bottom: 2.5px;
+  outline: none;
+  border-radius: 5px;
+  border: 1px solid cornflowerblue;
+}
+
 .wrapper {
-  width: 500px;
-  height: 300px;
+  width: 300px;
   display: flex;
   align-items: center;
   flex-direction: column;
-  justify-content: center;
-  border: 1px solid cadetblue;
+  align-items: stretch;
   border-radius: 10px;
+}
+
+.btn {
+  padding: 5px;
 }

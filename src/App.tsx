@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import "./styles/styles.css";
 
 const App = () => {
@@ -7,17 +7,66 @@ const App = () => {
   const [emailDirty, setEmailDirty] = useState(false);
   const [passwordDirty, setPasswordDirty] = useState(false);
   const [emailError, setEmailError] = useState("Email не может быть пустым");
-  const [passwordError, setpasswordError] = useState(
+  const [passwordError, setPasswordError] = useState(
     "Пароль не может быть пустым"
   );
+  const [formValid, setFormValid] = useState(false);
+
+  useEffect(() => {
+    if (emailError || passwordError) {
+      setFormValid(false);
+    } else {
+      setFormValid(true);
+    }
+  }, [emailError, passwordError]);
+
+  const validateEmail = (email: string) => {
+    return String(email)
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );
+  };
 
   const blurHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const target = e.target.name;
-    switch (target) {
+    const targetName = e.target.name;
+    const targetValue = e.target.value;
+    switch (targetName) {
       case "email":
-        return setEmailDirty(true);
+        setEmailDirty(true);
+        if (!targetValue) {
+          setEmailError("Email не может быть пустым");
+        }
+        break;
       case "password":
-        return setPasswordDirty(true);
+        setPasswordDirty(true);
+        if (!targetValue) {
+          setPasswordError("Пароль не может быть пустым");
+        }
+        break;
+    }
+  };
+
+  const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const targetType = e.target.type;
+    const targetValue = e.target.value;
+    switch (targetType) {
+      case "text":
+        setEmail(targetValue);
+        if (!validateEmail(targetValue) && targetValue) {
+          setEmailError("Некорректный email");
+        } else {
+          setEmailError("");
+        }
+        break;
+      case "password":
+        setPassword(targetValue);
+        if (targetValue.length < 5 && targetValue) {
+          setPasswordError("Слишком короткий пароль");
+        } else {
+          setPasswordError("");
+        }
+        break;
     }
   };
 
@@ -25,26 +74,36 @@ const App = () => {
     <div className="app">
       <form action="">
         <div className="wrapper">
-          <h1>Регистрация</h1>
+          <h1 className="title">Регистрация</h1>
           <input
+            className="input"
+            value={email}
+            onChange={(e) => changeInputHandler(e)}
             onBlur={(e) => blurHandler(e)}
             type="text"
             name="email"
             placeholder="Введите электронную почту"
           />
           {emailDirty && emailError && (
-            <div style={{ color: "red" }}>{emailError}</div>
+            <div style={{ color: "red", paddingLeft: "5px" }}>{emailError}</div>
           )}
           <input
+            className="input"
+            value={password}
+            onChange={(e) => changeInputHandler(e)}
             onBlur={(e) => blurHandler(e)}
             type="password"
             name="password"
             placeholder="Введите пароль"
           />
           {passwordDirty && passwordError && (
-            <div style={{ color: "red" }}>{passwordError}</div>
+            <div style={{ color: "red", paddingLeft: "5px" }}>
+              {passwordError}
+            </div>
           )}
-          <button type="submit">Ok</button>
+          <button disabled={!formValid} className="btn" type="submit">
+            Ok
+          </button>
         </div>
       </form>
     </div>
